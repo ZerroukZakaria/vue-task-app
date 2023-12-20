@@ -38,25 +38,26 @@ export default {
     props: ['id'],
     setup (props) {
 
-        const router = useRouter();
+        const router = useRouter()
         const route = useRoute()
-        const taskId = route.params.id;
+        const taskId = route.params.id
 
         const form = ref({
             title: '',
             description: '',
             status: '',
             due_date: ''
-        });
-        const errors = ref({});
+        })
+        const errors = ref({})
 
+        // Fetch task details
         onMounted(async() => {
-            console.log('Task ID:', taskId);
+            console.log('Task ID:', taskId)
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     this.$router.push({name: 'login'})
-                    return;
+                    return
                 }
                 const response = await axios.get(`${apiUrl}/tasks/${taskId}`, {
                     headers: {
@@ -64,28 +65,29 @@ export default {
                         'Authorization' : `Bearer ${token}`
                     }
                 })
-                form.value = response.data.task;
+                form.value = response.data.task
             } catch (error) {
-                console.error('Error fetching task details', error);
+                console.error('Error fetching task details', error)
             }
         })
         
+        // Form validation function
         const validateForm = () => {
-            let isValid = true;
+            let isValid = true
 
             if (!form.value.title || form.value.title.length > 255) {
-        errors.value.title = 'Title is required and must be less than 255 characters.';
-        isValid = false;
+        errors.value.title = 'Title is required and must be less than 255 characters.'
+        isValid = false
     }
 
             if (!form.value.description) {
-                errors.value.description = 'Description is required.';
-                isValid = false;
+                errors.value.description = 'Description is required.'
+                isValid = false
             }
 
             if (!['in progress', 'completed'].includes(form.value.status)) {
-                errors.value.status = 'Status must be either "in progress" or "completed".';
-                isValid = false;
+                errors.value.status = 'Status must be either "in progress" or "completed".'
+                isValid = false
             }
 
             const dueDate = new Date(form.value.due_date)
@@ -93,27 +95,28 @@ export default {
             tomorrow.setDate(tomorrow.getDate() + 1)
 
             if (!form.value.due_date || dueDate <= tomorrow) {
-                errors.value.due_date = 'Due date is required and must be a future date.';
-                isValid = false;
+                errors.value.due_date = 'Due date is required and must be a future date.'
+                isValid = false
             }
                 
-            return isValid;
+            return isValid
         }
 
+        // Task update function
         const updateTask = async () => {
 
             errors.value = {}
 
             if (!validateForm()) {
-                return;
+                return
             }
 
             try {
 
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     router.push({name: 'login'})
-                    return;
+                    return
                 }
 
                 console.log('Button clicked - updateTask method called')  
@@ -123,14 +126,14 @@ export default {
                         'Authorization' : `Bearer ${token}`
                     }
                 })
-                console.log('Task updated successfully', response.data);
+                console.log('Task updated successfully', response.data)
                 router.push({name: 'taskDetails', params: {id: taskId}})
 
 
             } catch (error) {
-                console.error('Error updating task', error);
+                console.error('Error updating task', error)
                 if (error.response && error.response.data.errors) {
-                    errors.value = error.response.data.errors;
+                    errors.value = error.response.data.errors
                 }
             }
         }

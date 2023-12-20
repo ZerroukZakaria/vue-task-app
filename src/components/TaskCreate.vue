@@ -33,7 +33,7 @@
 import axios from 'axios'
 import {apiUrl} from '../../utils/utils.js'
 import { useRouter } from 'vue-router'
-import {ref} from 'vue';
+import {ref} from 'vue'
 export default {
    
     setup () {
@@ -47,16 +47,17 @@ export default {
         const errors = ref({})
         const router = useRouter()
 
+        // Form validation function
         const validateForm = () => {
-            let isValid = true;
+            let isValid = true
 
             if (!form.value.title || form.value.title.length > 255) {
-        errors.value.title = 'Title is required and must be less than 255 characters.';
-        isValid = false;
+        errors.value.title = 'Title is required and must be less than 255 characters.'
+        isValid = false
     }
 
             if (!form.value.description) {
-                errors.value.description = 'Description is required.';
+                errors.value.description = 'Description is required.'
                 isValid = false;
             }
 
@@ -74,30 +75,31 @@ export default {
                 isValid = false;
             }
                 
-            return isValid;
+            return isValid
         }
         
+        // Function to create a new task
         const createTask = async () => {
 
             errors.value = {}
             if (!validateForm()) {
-                return;
+                return
             }
             
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     router.push({name: 'login'})
-                    return;
+                    return
                 }
-                console.log('Button clicked - createTask method called');
+                console.log('Button clicked - createTask method called')
                 const response = await axios.post(`${apiUrl}/tasks/store`,form.value , {
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization' : `Bearer ${token}`
                     }
                 })
-                console.log('Task created successfully:', response.data);
+                console.log('Task created successfully:', response.data)
                 router.push({name: 'taskList'})
 
                 
@@ -105,10 +107,10 @@ export default {
 
             catch (error) {
                 if (error.response && error.response.status === 422) {
-                    console.error('Validation Errors:', error.response.data.errors);
+                    console.error('Validation Errors:', error.response.data.errors)
 
                 } else {
-                    console.error('Error creating task', error);
+                    console.error('Error creating task', error)
                 }
             }
         }

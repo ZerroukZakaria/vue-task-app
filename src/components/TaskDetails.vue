@@ -41,10 +41,11 @@ export default {
     props: ['id'],
     methods: {
 
+       // navigate to task edit view
         navigateToTaskEdit(taskId) {
             this.$router.push({name: 'taskEdit', params:{id: taskId}})
         },
-
+        //navigate to task list view
         navigateToTaskList() {
             this.$router.push({name: 'taskList'})
         }
@@ -55,14 +56,15 @@ export default {
 
         const taskDetails = ref(null)
         const isLoading = ref(true)
-        const router = useRouter();
+        const router = useRouter()
 
+        // Fetch task details
         onMounted(async() => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     this.$router.push({name: 'login'})
-                    return;
+                    return
                 }
                 const response = await axios.get(`${apiUrl}/tasks/${props.id}`, {
                     headers: {
@@ -71,23 +73,24 @@ export default {
                     }
                 })
                 taskDetails.value = response.data.task
-                console.log('Task details loaded successfully', response.data);
+                console.log('Task details loaded successfully', response.data)
             }
 
             catch (error) {
-                console.error('Error fetching task details', error);
+                console.error('Error fetching task details', error)
             }
             finally {
                 isLoading.value = false
             }
         })
 
+        // Method to update task status
         const updateStatus = async () => {
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     router.push({name: 'login'})
-                    return;
+                    return
                 }
                 const response = await axios.patch(`${apiUrl}/tasks/${props.id}`, {
                     status: taskDetails.value.status
@@ -97,21 +100,22 @@ export default {
                         'Authorization' : `Bearer ${token}`
                     }
                 })
-                console.log('Task status updated successfully', response.data);
+                console.log('Task status updated successfully', response.data)
             }
 
             catch (error) {
-                console.error('Error updating task status', error);
+                console.error('Error updating task status', error)
             }
         }
 
+        // Method to delete task
         const deleteTask = async () => {
             if (window.confirm('Are you sure you want to delete this task?')) {
                 try{
-                    const token = localStorage.getItem('token');
+                    const token = localStorage.getItem('token')
                     if (!token) {
                         router.push({name: 'login'})
-                        return;
+                        return
                 }
                 const response = await axios.delete(`${apiUrl}/tasks/${props.id}`, {
                     headers: {
@@ -119,13 +123,13 @@ export default {
                         'Authorization' : `Bearer ${token}`
                     }
                 })
-                console.log('Task deleted successfully:', response.data);
+                console.log('Task deleted successfully:', response.data)
                 router.push({name: 'taskList'})
 
             }   
 
             catch(error) {
-                console.error("Error deleting task", error);
+                console.error("Error deleting task", error)
 
                 }
             }
@@ -139,7 +143,7 @@ export default {
 
 <style scoped>
 
-
+/* Loading spinner styles */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -148,8 +152,8 @@ export default {
 }
 
 .loader {
-  border: 8px solid #f3f3f3; /* Light grey */
-  border-top: 8px solid #3498db; /* Blue */
+  border: 8px solid #f3f3f3; 
+  border-top: 8px solid #3498db; 
   border-radius: 50%;
   width: 60px;
   height: 60px;

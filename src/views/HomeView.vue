@@ -3,7 +3,7 @@
     <div class="flex flex-col items-center">
       <h1 class="text-3xl font-bold mb-6 text-blue-600">Welcome User! Ready to see Your Tasks?</h1>
       <login-view/>
-      <!-- <button class="mt-6 p-2 w-full sm:w-auto bg-blue-500 text-white rounded-md hover:bg-blue-600" @click="navigateToTaskList">Go to my Tasks</button> -->
+
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@ export default {
     
   },
   methods: {
+    // navigate to the task list
     navigateToTaskList() {
       this.$router.push({name: 'taskList'})
     }

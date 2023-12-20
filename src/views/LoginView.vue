@@ -42,6 +42,7 @@ import { useRouter } from 'vue-router';
 export default {
 
     methods: {
+        // navigate to the registration page
         navigateToLogin() {
             this.$router.push({name: 'register'})
         }
@@ -61,6 +62,7 @@ export default {
         let navigateTo = ref(null);
 
         
+       // handle login 
        const login = async () => {
         if (!isEmailValid.value || !isPasswordValid.value) {
         return;
@@ -93,6 +95,8 @@ export default {
 
        }
 
+
+       // Watch for changes in navigateTo and navigate when it changes
        watchEffect(() => {
         if (navigateTo.value) {
            router.push(navigateTo.value);

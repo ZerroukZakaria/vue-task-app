@@ -63,16 +63,20 @@ export default {
         draggable
     },
     methods: {
+        // navigate to the task details
         navigateToTaskDetails(taskId) {
             this.$router.push({name: 'taskDetails', params:{id: taskId}})
         },
 
+        // navigate to the task create        
         navigateToTaskCreate() {
             this.$router.push({name:'taskCreate'})
         },
+
+        // logout the current user
         logout() {
-            localStorage.removeItem('token');
-            this.$router.push({ name: 'login' });
+            localStorage.removeItem('token')
+            this.$router.push({ name: 'login' })
         }
     },
     setup () {
@@ -84,59 +88,64 @@ export default {
         const perPage = ref(5)
         const searchTerm = ref('')        
         
+
+        // sort and filter tasks
         const filteredAndSortedTasks = computed(() => {
             let filteredTasks = tasks.value
 
             if (statusFilter.value !== 'All') {
-                filteredTasks = tasks.value.filter((task) => task.status === statusFilter.value);
+                filteredTasks = tasks.value.filter((task) => task.status === statusFilter.value)
             }
 
             if(searchTerm.value !== '') {
-                filteredTasks = filteredTasks.filter((task) => task.title.toLowerCase().includes(searchTerm.value.toLowerCase()));
+                filteredTasks = filteredTasks.filter((task) => task.title.toLowerCase().includes(searchTerm.value.toLowerCase()))
             }
 
 
             return filteredTasks.sort((a, b) => {
-                const dateA = new Date(a.due_date);
-                const dateB = new Date(b.due_date);
+                const dateA = new Date(a.due_date)
+                const dateB = new Date(b.due_date)
 
                 if (sortOrder.value === 'asc') {
-                return dateA - dateB;
+                return dateA - dateB
                 } else {
-                return dateB - dateA;
+                return dateB - dateA
                 }
-            });
+            })
 
-    });
+    })
 
+        // get paginated tasks
         const paginatedTasks = computed(() => {
-            const startIndex = (currentPage.value - 1) * perPage.value;
-            const endIndex = startIndex + perPage.value;
-            return filteredAndSortedTasks.value.slice(startIndex, endIndex);
-        });
+            const startIndex = (currentPage.value - 1) * perPage.value
+            const endIndex = startIndex + perPage.value
+            return filteredAndSortedTasks.value.slice(startIndex, endIndex)
+        })
 
         const totalPages = computed(() => {
-            return Math.ceil(filteredAndSortedTasks.value.length / perPage.value);
-        });
+            return Math.ceil(filteredAndSortedTasks.value.length / perPage.value)
+        })
 
         function nextPage() {
             if (currentPage.value < totalPages.value) {
-                currentPage.value++;
+                currentPage.value++
             }
         }
 
         function prevPage() {
             if (currentPage.value > 1) {
-                currentPage.value--;
+                currentPage.value--
             }
         }
 
+        // fetch the tasks if the user is logged in
         onMounted(async()=> {
+            
             try {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('token')
                 if (!token) {
                     router.push({name: 'login'})
-                    return;
+                    return
                 }
                 const response = await axios.get(`${apiUrl}/tasks`, {
                     headers: {
@@ -145,12 +154,12 @@ export default {
                     }
                 })
                 tasks.value = response.data.tasks
-                console.log('API request susscessful', response.data);
+                console.log('API request susscessful', response.data)
 
             }
 
             catch(error) {
-                console.error("Error fetching tasks", error);
+                console.error("Error fetching tasks", error)
             }
         })
 
